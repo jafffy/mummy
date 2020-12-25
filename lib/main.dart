@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() {
   runApp(MyApp());
@@ -74,12 +75,23 @@ class Geolocation extends StatefulWidget {
 class _GeolocationState extends State<Geolocation> {
   @override
   Widget build(BuildContext context) {
-    final position = _determinePosition();
-
-    return Text(position.toString());
+    return FutureBuilder<Position>(
+      future: _determinePosition(),
+      builder: (BuildContext context, AsyncSnapshot<Position> snapshot) {
+        return Text(snapshot.data.toString());
+      },
+    );
   }
 
   Future<Position> _determinePosition() async {
+    if (!await Permission.location.request().isGranted) {
+      return Future.error('Failed to get location permission.');
+    }
+
+    if (!await Permission.locationAlways.request().isGranted) {
+      return Future.error('Failed to get locationAlways permission.');
+    }
+
     bool serviceEnabled;
     LocationPermission permission;
 
