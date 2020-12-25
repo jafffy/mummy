@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -85,12 +88,69 @@ class Geolocation extends StatefulWidget {
   _GeolocationState createState() => _GeolocationState();
 }
 
+class _AddLog {
+  final double lat;
+  final double long;
+  final Timestamp timestamp;
+  final String name;
+
+  _AddLog(this.lat, this.long, this.timestamp, this.name);
+}
+
 class _GeolocationState extends State<Geolocation> {
+
+  List<_AddLog> logBuffer = [];
+
   @override
   Widget build(BuildContext context) {
+    Timer.periodic(
+        new Duration(minutes: 1),
+            (timer) async {
+          Position position = await _determinePosition();
+
+          logBuffer.add(_AddLog(position.latitude,
+              position.latitude,
+              Timestamp.now(),
+              "Jaewon"));
+        }
+    );
+
+    Timer.periodic(
+        new Duration(hours: 1),
+            (timer) {
+          if (logBuffer.length < 1)
+            return;
+          CollectionReference collectionReference = FirebaseFirestore.instance.collection('log');
+
+          for (var log in logBuffer) {
+            DocumentReference location = collectionReference.doc(log.timestamp.toString());
+            location.set({
+              'lat': log.lat,
+              'long': log.long,
+              'time': log.timestamp,
+              'who': log.name,
+            })
+                .then((value) => print("Log added"))
+                .catchError((error) => print("Failed to add log: $error"));
+          }
+
+          logBuffer.clear();
+        }
+    );
+
     return FutureBuilder<Position>(
       future: _determinePosition(),
       builder: (context, snapshot) {
+        if (snapshot.data == null) {
+          return Text("Loading...");
+        }
+
+        logBuffer.add(_AddLog(
+            snapshot.data.latitude,
+            snapshot.data.longitude,
+            Timestamp.now(),
+            "Jaewon"));
+
         return Text(snapshot.data.toString());
       },
     );
