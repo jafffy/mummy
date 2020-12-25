@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "475054392488",
+    "project_id": "mummy-876fc",
+    "storage_bucket": "mummy-876fc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:475054392488:android:c79c15235595665267ae9d",
+        "android_client_info": {
+          "package_name": "org.mummy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "475054392488-4t9ehm82boluoduv8th1o47i814utamv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOhVb7JVwxgEXEHh0Bn_q_H451Jk3QEyY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "475054392488-4t9ehm82boluoduv8th1o47i814utamv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

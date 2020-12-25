@@ -1,12 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-void main() {
+bool USE_FIRESTORE_EMULATOR = false;
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
+  if (USE_FIRESTORE_EMULATOR) {
+    FirebaseFirestore.instance.settings = Settings(
+      host: 'localhost:8080', sslEnabled: false, persistenceEnabled: false);
+  }
+
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  /*
+  final FirebaseOptions firebaseOptions = const FirebaseOptions(
+    googleAppID: '1:475054392488:android:c79c15235595665267ae9d',
+    apiKey: 'AIzaSyAOhVb7JVwxgEXEHh0Bn_q_H451Jk3QEyY',
+    projectID: 'mummy-876fc',
+  );
+  */
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -47,13 +67,6 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
             Geolocation(),
           ],
         ),
@@ -77,7 +90,7 @@ class _GeolocationState extends State<Geolocation> {
   Widget build(BuildContext context) {
     return FutureBuilder<Position>(
       future: _determinePosition(),
-      builder: (BuildContext context, AsyncSnapshot<Position> snapshot) {
+      builder: (context, snapshot) {
         return Text(snapshot.data.toString());
       },
     );
